@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+:root {
+  --background: #04070d;
+  --foreground: #eaf2ff;
+  --blue-primary: #3b82f6;
+  --blue-secondary: #1d4ed8;
+  --red-accent: #ef4444;
+  --red-secondary: #b91c1c;
+  --dark-gray: #101826;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-rajdhani);
+  --font-mono: var(--font-orbitron);
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(59, 130, 246, 0.65);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-gold {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes cp-drift {
+  0% {
+    transform: translate3d(0, 120vh, 0) scale(0.85) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate3d(60px, 45vh, 0) scale(1) rotate(6deg);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(-40px, -20vh, 0) scale(0.9) rotate(-8deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cp-orbit {
+  0% {
+    transform: rotate(0deg) translateX(30px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(30px) rotate(-360deg);
+  }
+}
+
+body {
+  background: radial-gradient(circle at 20% 10%, rgba(59, 130, 246, 0.2), transparent 40%),
+    radial-gradient(circle at 80% 85%, rgba(239, 68, 68, 0.2), transparent 45%),
+    linear-gradient(160deg, #02050b 0%, #070d18 45%, #03060b 100%);
+  color: var(--foreground);
+  font-family: var(--font-rajdhani), "Trebuchet MS", sans-serif;
+}
+
+h1,
+h2,
+h3,
+.display-font {
+  font-family: var(--font-orbitron), "Trebuchet MS", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.glow-effect {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+.slide-in-top {
+  animation: slideInFromTop 0.6s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+.slide-in-bottom {
+  animation: slideInFromBottom 0.6s ease-out;
+}
+
+.pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+.blue-text {
+  color: var(--blue-primary);
+  text-shadow: 0 0 12px rgba(59, 130, 246, 0.35);
+}
+
+.red-text {
+  color: var(--red-accent);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 22px rgba(59, 130, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.8), 0 0 24px rgba(239, 68, 68, 0.2);
+  transition: all 0.3s ease;
+}
+
+.border-accent {
+  border-color: var(--blue-primary);
+  border-width: 1px;
+}
+
+.cp-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 68, 68, 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at center, black 20%, transparent 90%);
+}
+
+.cp-bg-symbol {
+  position: absolute;
+  font-family: var(--font-orbitron), monospace;
+  font-weight: 700;
+  text-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+  animation-name: cp-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.cp-bg-node {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(59, 130, 246, 0.85);
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.8);
+  animation: cp-orbit 6s linear infinite;
+}
