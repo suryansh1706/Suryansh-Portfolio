@@ -9,11 +9,11 @@ const experiences = [
     highlights: ["100+ students trained", "Structured learning programs", "Contest preparation"]
   },
   {
-    role: "Competitive Programming Instructor",
+    role: "Founder, Competitive Programming Community",
     company: "Maharaja Agrasen Institute of Technology",
-    period: "Aug 2023 - Present",
-    description: "Led competitive programming training sessions and taught students algorithms, data structures, and contest problem-solving strategy.",
-    highlights: ["Algorithms instruction", "Contest strategy coaching", "Student mentorship"]
+    period: "Aug 2025 - Present",
+    description: "Founded and built a student-led competitive programming community at MAIT, driving structured practice, peer learning, and contest culture.",
+    highlights: ["Community founded", "Structured CP practice", "Contest culture building"]
   }
 ];
 
@@ -100,11 +100,11 @@ export default function Experience() {
             {education.map((edu, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-red-500/10 to-transparent border border-red-500/30 rounded-lg p-6 hover-glow slide-in-right"
+                className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/30 rounded-lg p-6 hover-glow slide-in-right"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <h4 className="text-xl font-bold text-white mb-2">{edu.degree}</h4>
-                <p className="text-red-300 mb-1">{edu.school}</p>
+                <p className="text-blue-300 mb-1">{edu.school}</p>
                 <p className="text-gray-300 text-sm">Branch: {edu.branch}</p>
                 <p className="text-gray-300 text-sm">CGPA: {edu.cgpa}</p>
                 <p className="text-gray-400 text-sm">{edu.period}</p>
@@ -136,7 +136,14 @@ export default function Experience() {
         <div className="mt-16 bg-gradient-to-r from-blue-500/10 to-transparent border-l-4 border-blue-500 p-8 rounded slide-in-top">
           <h3 className="text-2xl font-bold blue-text mb-4">Certifications</h3>
           <div className="space-y-2 text-gray-300">
-            <p>✓ HackerRank Problem Solving Certificate</p>
+            <a
+              href="https://www.hackerrank.com/certificates/2b66df3335ed"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-200 underline underline-offset-4"
+            >
+              <span>✓ HackerRank Problem Solving Certificate</span>
+            </a>
           </div>
         </div>
       </div>

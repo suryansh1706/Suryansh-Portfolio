@@ -404,45 +404,6 @@ export default function CPStatsSection() {
     };
   }, [statsData, activityData]);
 
-  const crossPlatformAverageRating = useMemo(() => {
-    if (!statsData || !activityData) {
-      return null;
-    }
-
-    const cfSolved = statsData.stats.solvedTotal;
-    const cfAvg = statsData.insights.averageSolvedRating;
-
-    const lcSolved = activityData.totals.leetcodeSolved;
-    const lcWeighted =
-      activityData.totals.leetcodeEasySolved * 1100 +
-      activityData.totals.leetcodeMediumSolved * 1500 +
-      activityData.totals.leetcodeHardSolved * 2000;
-    const lcAvg = lcSolved > 0 ? Math.round(lcWeighted / lcSolved) : 0;
-
-    const ccSolved = statsData.codechef?.totalProblemsSolved ?? 0;
-    const ccAvg = statsData.codechef?.rating ?? 0;
-
-    const csesSolved = statsData.cses?.submissionCount ?? 0;
-    const csesAvg = csesSolved > 0 ? 1300 : 0;
-
-    const totalSolved = cfSolved + lcSolved + ccSolved + csesSolved;
-    if (totalSolved === 0) {
-      return null;
-    }
-
-    const weightedAvg = Math.round(
-      (cfAvg * cfSolved + lcAvg * lcSolved + ccAvg * ccSolved + csesAvg * csesSolved) / totalSolved
-    );
-
-    return {
-      overall: weightedAvg,
-      codeforces: cfAvg,
-      leetcodeEquivalent: lcAvg,
-      codechefEquivalent: ccAvg,
-      csesEquivalent: csesAvg,
-    };
-  }, [statsData, activityData]);
-
   const wrapped = useMemo(() => {
     if (!activityData || !statsData) {
       return null;
@@ -571,7 +532,7 @@ export default function CPStatsSection() {
   };
 
   const wrappedCards = useMemo<WrapCard[]>(() => {
-    if (!statsData || !activityData || !wrapped || !crossPlatformAverageRating) {
+    if (!statsData || !activityData || !wrapped) {
       return [];
     }
 
@@ -584,8 +545,6 @@ export default function CPStatsSection() {
 
     return [
       { title: 'Total Solved', value: `${combinedTotals?.totalProblemsAll ?? 0}`, sub: 'Across CF + CC + LC', tone: 'blue' },
-      { title: 'Cross-Platform Avg Rating', value: `${crossPlatformAverageRating.overall}`, sub: 'Unified difficulty index', tone: 'red' },
-      { title: 'Codeforces Avg Solved Rating', value: `${statsData.insights.averageSolvedRating}`, sub: 'Your CF solve profile', tone: 'blue' },
       { title: 'GitHub Commits', value: `${activityData.totals.githubCommitsRecent}`, sub: 'Recent public push commits', tone: 'slate' },
       { title: 'Longest Active Streak', value: `${wrapped.streak} days`, sub: 'Consecutive tracked activity', tone: 'indigo' },
       { title: 'Best Activity Day', value: `${busiestHeatDay?.total ?? 0} actions`, sub: busiestHeatDay ? formatDateLabel(busiestHeatDay.date) : 'No day tracked', tone: 'orange' },
@@ -599,7 +558,7 @@ export default function CPStatsSection() {
       { title: 'Active Days', value: `${wrapped.activeDays}`, sub: `Out of ${activityData.heatmap.windowDays} tracked days`, tone: 'slate' },
       { title: 'Total Tracked Actions', value: `${wrapped.totalActions}`, sub: 'Submissions + solves + commits + events', tone: 'red' },
     ];
-  }, [statsData, activityData, wrapped, crossPlatformAverageRating, combinedTotals]);
+  }, [statsData, activityData, wrapped, combinedTotals]);
 
   const onWrappedNext = () => {
     if (!wrappedCards.length) {
@@ -782,35 +741,6 @@ export default function CPStatsSection() {
           </div>
         )}
 
-        {crossPlatformAverageRating && (
-          <div className="bg-gradient-to-r from-red-950/30 to-blue-950/30 border border-red-500/35 rounded-xl p-7 mb-10">
-            <h3 className="text-2xl font-bold text-white mb-4">Average Problem Rating (Cross-Platform)</h3>
-            <div className="grid md:grid-cols-5 gap-4">
-              <div className="bg-black/40 border border-red-500/30 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-400 uppercase">Overall</p>
-                <p className="text-3xl font-bold text-red-300">{crossPlatformAverageRating.overall}</p>
-              </div>
-              <div className="bg-black/40 border border-blue-500/30 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-400 uppercase">CF Avg</p>
-                <p className="text-2xl font-bold text-blue-300">{crossPlatformAverageRating.codeforces}</p>
-              </div>
-              <div className="bg-black/40 border border-orange-500/30 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-400 uppercase">LC Eqv</p>
-                <p className="text-2xl font-bold text-orange-300">{crossPlatformAverageRating.leetcodeEquivalent}</p>
-              </div>
-              <div className="bg-black/40 border border-red-500/30 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-400 uppercase">CC Eqv</p>
-                <p className="text-2xl font-bold text-red-300">{crossPlatformAverageRating.codechefEquivalent}</p>
-              </div>
-              <div className="bg-black/40 border border-indigo-500/30 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-400 uppercase">CSES Eqv</p>
-                <p className="text-2xl font-bold text-indigo-300">{crossPlatformAverageRating.csesEquivalent}</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-400 mt-4">LeetCode and CSES are shown as equivalent rating indexes for cross-platform comparison.</p>
-          </div>
-        )}
-
         <div className="bg-gradient-to-br from-slate-950 to-black border border-blue-500/35 rounded-xl p-7 mb-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5">
             <div>
@@ -886,7 +816,7 @@ export default function CPStatsSection() {
 
         {wrapped && wrappedCards.length > 0 && (
           <div className="bg-gradient-to-r from-indigo-950/40 via-blue-950/30 to-red-950/40 border border-indigo-500/40 rounded-xl p-8 mb-10">
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Your CP Wrapped</h3>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Suryansh CP Wrapped</h3>
             <p className="text-sm text-gray-300 mb-4">Swipe right for next card. 15 cards with deep CP + GitHub facts.</p>
 
             <div
@@ -976,9 +906,6 @@ export default function CPStatsSection() {
             </div>
           )}
 
-          {!activityData.cses.dailyActivityAvailable && (
-            <p className="text-xs text-amber-300 mt-4">{activityData.cses.note}</p>
-          )}
         </div>
 
         <div className="bg-gradient-to-br from-blue-950/30 to-black border border-blue-500/40 rounded-xl p-8 mb-10">

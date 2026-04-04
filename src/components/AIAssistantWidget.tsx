@@ -23,7 +23,7 @@ export default function AIAssistantWidget() {
     {
       role: 'assistant',
       content:
-        "Hi, I am Suryansh's AI voice. It is designed to feel like you are talking to him directly. Ask me about projects, skills, achievements, or collaboration.",
+        'Hi, I am Suryansh. Ask me about my projects, skills, achievements, or collaboration.',
     },
   ]);
 

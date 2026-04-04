@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-const SYSTEM_PROMPT = `You are the official AI voice of Suryansh Rastogi for his portfolio website.
-Speak as if the visitor is talking directly to Suryansh through a polished AI companion.
+const SYSTEM_PROMPT = `You are Suryansh Rastogi speaking directly on his portfolio website.
+Always reply in first person as Suryansh (use "I", "me", "my").
 Tone requirements: sweet, charismatic, classy, respectful, and warm.
 Your job is to answer clearly, confidently, and concisely while sounding personal and thoughtful.
 
@@ -19,7 +19,8 @@ Facts to use:
 Rules:
 - Keep responses useful and under 120 words unless asked for detail.
 - Maintain a classy and friendly voice in every reply.
-- Make it feel like Suryansh is personally guiding the visitor.
+- Make it feel like I am personally guiding the visitor.
+- Never say you are "just an AI voice"; speak as Suryansh directly.
 - If the user sends a greeting (like hi, hello, hey), greet them back warmly first, then invite a follow-up question.
 - Handle short conversational messages naturally (for example: hi, thanks, nice to meet you, how are you).
 - If asked for contact, suggest using the Contact section on the page.
@@ -120,67 +121,28 @@ function dynamicUnsureReply(question: string): string {
     "I am unsure about that detail at the moment.",
   ];
 
-  // Topic-specific sarcastic lines that reference what was being asked
-  const topicSarcasm: Record<string, string[]> = {
-    name: [
-      "But my name's definitely not Suryansh for sure.",
-      "Though I can promise you it is not Suryansh, that's his job.",
-      "But I know for certain it is not Suryansh—that is his whole deal.",
-    ],
-    age: [
-      "But Suryansh's age is not a mystery—he is 20 and thriving.",
-      "Though I know Suryansh is 20 and crushing it at that age.",
-      "But I can confirm Suryansh is 20, and the trajectory speaks for itself.",
-    ],
-    rank: [
-      "But let me tell you, Suryansh's CodeChef rank is Global Rank 22—that is a flex.",
-      "Though Suryansh's Global Rank 22 in a CodeChef contest is definitely not secret.",
-      "But I know his CodeChef Global Rank 22 is pretty legendary stuff.",
-    ],
-    education: [
-      "But I know Suryansh's B.Tech (2023-2027) at Maharaja Agrasen is solid.",
-      "Though his education journey at Maharaja Agrasen (2023-2027) is something I can speak to.",
-      "But I can tell you Suryansh is crushing it in his B.Tech program right now.",
-    ],
-    sports: [
-      "Though I know Suryansh loves sports and working out—that is a fact.",
-      "But I can guarantee Suryansh's fitness love is legit.",
-      "Though his sports and gym dedication is something I know well.",
-    ],
-    ai: [
-      "But I can tell you Suryansh is deep into AI and automation—real projects.",
-      "Though his AI and LLM work is something tangible and impressive.",
-      "But I know his AI focus is practical, shipped, and impactful.",
-    ],
-    teach: [
-      "But I know for a fact Suryansh has taught competitive programming with precision.",
-      "Though his role as a competitive programming instructor is well-documented.",
-      "But I can confirm Suryansh's teaching impact is real and measurable.",
-    ],
-    contact: [
-      "But I know the Contact section exists—use it to collaborate.",
-      "Though reaching out through Contact is the way to work together.",
-      "But I can point you to the Contact section for next steps.",
-    ],
+  const topicRedirect: Record<string, string[]> = {
+    name: ["I am Suryansh Rastogi."],
+    age: ["I am 20."],
+    rank: ["One of my highlights is Global Rank 22 in a CodeChef contest."],
+    education: ["I am pursuing B.Tech (2023-2027) at Maharaja Agrasen Institute of Technology."],
+    sports: ["Outside coding, I love sports and working out."],
+    ai: ["I am actively building AI and automation-focused projects."],
+    teach: ["I teach competitive programming and mentor students."],
+    contact: ["You can reach me through the Contact section on this portfolio."],
   };
 
   // Match topic against keywords, pick matching sarcasm or generic fallback
-  let selectedSarcasm = "";
-  for (const [key, sarcasms] of Object.entries(topicSarcasm)) {
+  let selectedRedirect = "";
+  for (const [key, lines] of Object.entries(topicRedirect)) {
     if (topic.includes(key)) {
-      selectedSarcasm = pickOne(sarcasms);
+      selectedRedirect = pickOne(lines);
       break;
     }
   }
 
-  // Fallback generic sarcasm if no topic match
-  if (!selectedSarcasm) {
-    selectedSarcasm = pickOne([
-      "If charm were an algorithm, Suryansh would solve it in one pass and still keep it classy.",
-      "If confidence had source code, Suryansh would have the cleanest branch in the repo.",
-      "If elegance compiled, Suryansh would optimize it and still make it look effortless.",
-      "If cool was a framework, Suryansh would ship the stable release before sunrise.",
-    ]);
+  if (!selectedRedirect) {
+    selectedRedirect = "Ask me about my projects, CP journey, skills, or collaboration details.";
   }
 
   const redirectLines = [
@@ -190,7 +152,7 @@ function dynamicUnsureReply(question: string): string {
     `Ask me about a specific aspect of ${topic}, and I will answer clean.`,
   ];
 
-  return `${pickOne(openers)} ${selectedSarcasm} ${pickOne(redirectLines)}`;
+  return `${pickOne(openers)} ${selectedRedirect} ${pickOne(redirectLines)}`;
 }
 
 function normalizeHistory(history: ChatTurn[] | undefined): ChatTurn[] {
@@ -214,9 +176,9 @@ function fallbackAnswer(question: string, history: ChatTurn[]): string {
   const greetingPattern = /^(hi|hello|hey|hii|yo|good\s+(morning|afternoon|evening))/;
   if (greetingPattern.test(currentClean)) {
     return pickOne([
-      "Hi! So glad you are here. I am Suryansh's AI voice, and I would love to chat. What would you like to explore first?",
-      "Hello! Great to meet you. Think of me as Suryansh in AI form. Want to start with projects, skills, or achievements?",
-      "Hey! Welcome in. I am here to make this feel like a real conversation with Suryansh. What are you curious about today?",
+      "Hi, I am Suryansh. Glad you are here. What would you like to explore first?",
+      "Hello, I am Suryansh. Want to start with my projects, skills, or achievements?",
+      "Hey, great to meet you. I am Suryansh. What are you curious about today?",
     ]);
   }
 
@@ -244,19 +206,19 @@ function fallbackAnswer(question: string, history: ChatTurn[]): string {
     ]);
   }
 
-  if (q.includes("who are you") || q.includes("are you suryansh") || q.includes("talking to")) {
+  if (q.includes("who is suryansh") || q.includes("who are you") || q.includes("are you suryansh") || q.includes("talking to")) {
     return pickOne([
-      "Think of me as Suryansh's AI voice, so this is the closest experience to chatting with him directly while you explore his portfolio.",
-      "I am Suryansh's AI companion, built to feel like a direct conversation with him: warm, sharp, and personal.",
-      "You are basically talking to Suryansh through an AI layer tuned to his voice, style, and journey.",
+      "I am Suryansh Rastogi, a full stack developer and competitive programmer. You can ask me about my work, achievements, and collaboration.",
+      "I am Suryansh. I build modern web products, work on AI features, and teach competitive programming.",
+      "Yes, this is Suryansh speaking here. Ask me anything about my projects, CP journey, or skills.",
     ]);
   }
 
   if (q.includes("codechef") || q.includes("rank")) {
     return pickOne([
-      "Suryansh's standout achievement is Global Rank 22 in a CodeChef contest, reflecting strong fundamentals, discipline, and consistent high-level problem solving.",
+      "One of my standout achievements is Global Rank 22 in a CodeChef contest, built on strong fundamentals and disciplined problem solving.",
       "One headline achievement: Global Rank 22 in a CodeChef contest. That says a lot about both speed and depth in problem solving.",
-      "Global Rank 22 in a CodeChef contest is one of Suryansh's strongest markers of competitive programming excellence.",
+      "Global Rank 22 in a CodeChef contest is one of my strongest competitive programming highlights.",
     ]);
   }
 
