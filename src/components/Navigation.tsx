@@ -19,6 +19,7 @@ export default function Navigation() {
           <button onClick={() => scrollToSection('hero')} className="hover:text-blue-400 transition">Home</button>
           <button onClick={() => scrollToSection('projects')} className="hover:text-blue-400 transition">Projects</button>
           <button onClick={() => scrollToSection('skills')} className="hover:text-blue-400 transition">Skills</button>
+          <button onClick={() => scrollToSection('cp-stats')} className="hover:text-blue-400 transition">CP Stats</button>
           <button onClick={() => scrollToSection('experience')} className="hover:text-blue-400 transition">Experience</button>
           <button onClick={() => scrollToSection('contact')} className="hover:text-red-400 transition">Contact</button>
         </div>
