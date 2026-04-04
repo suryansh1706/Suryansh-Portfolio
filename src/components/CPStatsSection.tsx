@@ -13,6 +13,12 @@ type TrendPoint = {
   rating: number;
 };
 
+type CodeChefTrendPoint = {
+  contest: number;
+  rating: number;
+  rank: number;
+};
+
 type StatsPayload = {
   handle: string;
   profile: {
@@ -103,6 +109,7 @@ type StatsPayload = {
     globalRank: number;
     totalProblemsSolved: number;
     contestsParticipated: number;
+    ratingTrend: CodeChefTrendPoint[];
   } | null;
   cses: {
     profile: string;
@@ -355,26 +362,40 @@ export default function CPStatsSection() {
     };
   }, []);
 
-  const ratingPath = useMemo(() => {
-    if (!statsData?.recentRatingTrend?.length) {
+  const buildRatingPath = (ratings: number[]): string => {
+    if (!ratings.length) {
       return '';
     }
 
     const width = 640;
     const height = 220;
     const padding = 24;
-    const ratings = statsData.recentRatingTrend.map((item) => item.rating);
     const minRating = Math.min(...ratings);
     const maxRating = Math.max(...ratings);
     const range = Math.max(maxRating - minRating, 1);
 
-    return statsData.recentRatingTrend
-      .map((item, index) => {
-        const x = padding + (index * (width - padding * 2)) / Math.max(statsData.recentRatingTrend.length - 1, 1);
-        const y = height - padding - ((item.rating - minRating) / range) * (height - padding * 2);
+    return ratings
+      .map((value, index) => {
+        const x = padding + (index * (width - padding * 2)) / Math.max(ratings.length - 1, 1);
+        const y = height - padding - ((value - minRating) / range) * (height - padding * 2);
         return `${index === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
       })
       .join(' ');
+  };
+
+  const cfRatingPath = useMemo(() => {
+    if (!statsData?.recentRatingTrend?.length) {
+      return '';
+    }
+    return buildRatingPath(statsData.recentRatingTrend.map((item) => item.rating));
+  }, [statsData]);
+
+  const codechefRatingPath = useMemo(() => {
+    const trend = statsData?.codechef?.ratingTrend ?? [];
+    if (!trend.length) {
+      return '';
+    }
+    return buildRatingPath(trend.map((item) => item.rating));
   }, [statsData]);
 
   const maxSolvedBucket = useMemo(() => {
@@ -910,7 +931,7 @@ export default function CPStatsSection() {
 
         <div className="bg-gradient-to-br from-blue-950/30 to-black border border-blue-500/40 rounded-xl p-8 mb-10">
           <h3 className="text-2xl font-bold text-white mb-2">Codeforces Rating Progression</h3>
-          <p className="text-gray-400 text-sm mb-5">Last 20 rated contests</p>
+          <p className="text-gray-400 text-sm mb-5">All rated contests ({statsData.recentRatingTrend.length})</p>
           <svg viewBox="0 0 640 220" className="w-full h-60 rounded bg-black/40 border border-blue-500/20">
             <defs>
               <linearGradient id="ratingGradient" x1="0" y1="0" x2="1" y2="0">
@@ -918,7 +939,29 @@ export default function CPStatsSection() {
                 <stop offset="100%" stopColor="#ef4444" />
               </linearGradient>
             </defs>
-            <path d={ratingPath} fill="none" stroke="url(#ratingGradient)" strokeWidth="4" strokeLinecap="round" />
+            <path d={cfRatingPath} fill="none" stroke="url(#ratingGradient)" strokeWidth="4" strokeLinecap="round" />
+          </svg>
+        </div>
+
+        <div className="bg-gradient-to-br from-red-950/30 to-black border border-red-500/40 rounded-xl p-8 mb-10">
+          <h3 className="text-2xl font-bold text-white mb-2">CodeChef Rating Progression</h3>
+          <p className="text-gray-400 text-sm mb-5">
+            {statsData.codechef?.ratingTrend?.length
+              ? `All tracked contests (${statsData.codechef.ratingTrend.length})`
+              : 'No historical contest rating data available right now'}
+          </p>
+          <svg viewBox="0 0 640 220" className="w-full h-60 rounded bg-black/40 border border-red-500/20">
+            <defs>
+              <linearGradient id="codechefRatingGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#f87171" />
+                <stop offset="100%" stopColor="#fb7185" />
+              </linearGradient>
+            </defs>
+            {codechefRatingPath ? (
+              <path d={codechefRatingPath} fill="none" stroke="url(#codechefRatingGradient)" strokeWidth="4" strokeLinecap="round" />
+            ) : (
+              <text x="320" y="120" textAnchor="middle" className="fill-gray-400 text-sm">No CodeChef rating history found.</text>
+            )}
           </svg>
         </div>
 

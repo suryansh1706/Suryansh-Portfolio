@@ -86,6 +86,11 @@ type CodeChefStats = {
   totalProblemsSolved: number;
   contestsParticipated: number;
   latestContestGlobalRank: number;
+  ratingTrend: Array<{
+    contest: number;
+    rating: number;
+    rank: number;
+  }>;
 };
 
 type CsesStats = {
@@ -610,6 +615,13 @@ async function fetchCodeChefStats(handle: string): Promise<CodeChefStats | null>
     const latestContestGlobalRank = parseNumberString(latestPoint?.rank) || parseFirstNumber(/Global\s+Rank:\s*([\d,]+)/i, html);
     const globalRank = parseFirstNumber(/\[(\d[\d,]*)\]\s*Global\s+Rank/i, html) || latestContestGlobalRank;
     const countryRank = parseFirstNumber(/\[(\d[\d,]*)\]\s*Country\s+Rank/i, html);
+    const ratingTrend = ratingSeries
+      .map((point, index) => ({
+        contest: index + 1,
+        rating: parseNumberString(point.rating),
+        rank: parseNumberString(point.rank),
+      }))
+      .filter((point) => point.rating > 0);
 
     if (!rating && !highestRating && !totalProblemsSolved) {
       return null;
@@ -624,6 +636,7 @@ async function fetchCodeChefStats(handle: string): Promise<CodeChefStats | null>
       totalProblemsSolved,
       contestsParticipated,
       latestContestGlobalRank,
+      ratingTrend,
     };
   } catch {
     return null;
@@ -744,7 +757,7 @@ export async function GET(request: Request) {
       return item.rank < best ? item.rank : best;
     }, null);
 
-    const lastTwentyRatings = ratingHistory.slice(-20).map((item) => ({
+    const allContestRatings = ratingHistory.map((item) => ({
       contestId: item.contestId,
       rank: item.rank,
       rating: item.newRating,
@@ -772,7 +785,7 @@ export async function GET(request: Request) {
       },
       solvedByRating,
       monthlySolvedTrend,
-      recentRatingTrend: lastTwentyRatings,
+      recentRatingTrend: allContestRatings,
       insights: {
         averageSolvedRating: cfAverageSolvedRating,
         topTopics,
